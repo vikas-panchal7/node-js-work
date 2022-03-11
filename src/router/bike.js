@@ -75,7 +75,7 @@ router.get("/bike/bikes", async (req, res) => {
 
       return res.status(200).send(bikes);
     }
-    const bikes = await Bike.find();
+    const bikes = await Bike.find().populate("biketype").exec();
     res.status(200).send(bikes);
   } catch (error) {
     res.status(500).send(error.toString());
