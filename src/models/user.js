@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+//
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, trim: true, required: true },
@@ -43,6 +46,8 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+//
 //for giving specifiec data and hiding er relavant data
 userSchema.methods.toJSON = function () {
   const user = this;
@@ -54,7 +59,9 @@ userSchema.methods.toJSON = function () {
   delete userObject.updatedAt;
   return userObject;
 };
-// for login creedrtails chek
+
+//
+// for login credentails check
 userSchema.statics.findByCredentails = async (email, password) => {
   const user = await User.findOne({ email });
 
@@ -68,6 +75,7 @@ userSchema.statics.findByCredentails = async (email, password) => {
   return user;
 };
 
+//
 //to method generate token
 userSchema.methods.generateAuthtoken = async function () {
   const user = this;
@@ -75,7 +83,10 @@ userSchema.methods.generateAuthtoken = async function () {
   user.tokens = user.tokens.concat({ token });
   await user.save();
   return token;
-}; // hashing password before save to database
+};
+
+//
+// hashing password before save to database
 userSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password")) {
@@ -83,5 +94,7 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
+
+//
 const User = mongoose.model("User", userSchema);
 module.exports = User;

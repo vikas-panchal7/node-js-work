@@ -6,12 +6,20 @@ const auth = require("../middleware/auth");
 //for creating/registering user in bike app
 router.post("/bike/user", async (req, res) => {
   const adduser = new User(req.body);
+
   try {
     await adduser.save();
     const token = await adduser.generateAuthtoken();
     res.status(201).send({ adduser, token });
   } catch (error) {
-    res.send(error.toString());
+    if (error && error.errors?.password) {
+      return res.status(404).send({ error: "Enter Min 7 character password" });
+    } else {
+      if (error && error?.code) {
+        return res.status(409).send({ error: "Email is Already Exist" });
+      }
+      res.status(500).send(error);
+    }
   }
 });
 
